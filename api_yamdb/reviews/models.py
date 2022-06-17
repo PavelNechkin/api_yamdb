@@ -25,6 +25,7 @@ class Title(models.Model):
     name = models.CharField(max_length=256)
     year = models.IntegerField()
     description = models.TextField()
+    rating = models.IntegerField(null=True)
     category = models.ForeignKey(
         Category, on_delete=models.CASCADE, related_name='titles')
     genre = models.ManyToManyField(
