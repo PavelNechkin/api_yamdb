@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 
 from django.db import models
@@ -36,6 +35,7 @@ class User(AbstractUser):
         blank=True
     )
 
+    # что значит этот декоратор
     @property
     def is_moderator(self):
         return self.role == self.MODERATOR
@@ -54,7 +54,7 @@ class User(AbstractUser):
 
         constraints = [
             models.CheckConstraint(
-                check=~models.Q(username__iexact="me"),
-                name="username_is_not_me"
+                check=~models.Q(username__iexact='me'),
+                name='username_is_not_me'
             )
         ]
