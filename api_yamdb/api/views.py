@@ -11,20 +11,17 @@ from rest_framework import viewsets
 
 from api.permissions import IsAdmin
 from api.serializers import (UserSerializer,
-    TokenSerializer,
+                             TokenSerializer,
                              RegisterDataSerializer,
-    UserEditSerializer)
-from api.serializers import (
-    CategorySerializer,
-    GenreSerializer,
-    TitleSerializer,
-)
+                             UserEditSerializer)
+from api.serializers import (CategorySerializer,
+                             GenreSerializer,
+                             TitleSerializer,)
 from reviews.models import User
-from reviews.models import (
-    Category,
-    Genre,
-    Title,
-)
+from reviews.models import (Category,
+                            Genre,
+                            Title,)
+
 
 class UserViewSet(viewsets.ModelViewSet):
     lookup_field = 'username'  # что это
@@ -32,6 +29,7 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     pagination_class = PageNumberPagination
     permission_classes = (IsAdmin,)
+
     @action(
         methods=[
             'get',
@@ -97,14 +95,18 @@ def get_jwt_token(request):
         return Response({'token': str(token)}, status=status.HTTP_200_OK)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class GenreViewSet(viewsets.ModelViewSet):
-    gueryset = Genre.objects.all()
+    queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    gueryset = Title.objects.all()
+    queryset = Title.objects.all()
     serializer_class = TitleSerializer
+
+
 class CategoryViewSet(viewsets.ModelViewSet):
-    gueryset = Category.objects.all()
+    queryset = Category.objects.all()
     serializer_class = CategorySerializer
