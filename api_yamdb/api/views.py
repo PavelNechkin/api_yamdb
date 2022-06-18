@@ -7,11 +7,24 @@ from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework import viewsets
 
 from api.permissions import IsAdmin
-from api.serializers import UserSerializer, TokenSerializer, RegisterDataSerializer, UserEditSerializer
+from api.serializers import (UserSerializer,
+    TokenSerializer,
+                             RegisterDataSerializer,
+    UserEditSerializer)
+from api.serializers import (
+    CategorySerializer,
+    GenreSerializer,
+    TitleSerializer,
+)
 from reviews.models import User
-
+from reviews.models import (
+    Category,
+    Genre,
+    Title,
+)
 
 class UserViewSet(viewsets.ModelViewSet):
     lookup_field = 'username'  # что это
@@ -19,7 +32,6 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     pagination_class = PageNumberPagination
     permission_classes = (IsAdmin,)
-
     @action(
         methods=[
             'get',
@@ -85,3 +97,14 @@ def get_jwt_token(request):
         return Response({'token': str(token)}, status=status.HTTP_200_OK)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class GenreViewSet(viewsets.ModelViewSet):
+    gueryset = Genre.objects.all()
+    serializer_class = GenreSerializer
+
+
+class TitleViewSet(viewsets.ModelViewSet):
+    gueryset = Title.objects.all()
+    serializer_class = TitleSerializer
+class CategoryViewSet(viewsets.ModelViewSet):
+    gueryset = Category.objects.all()
+    serializer_class = CategorySerializer
