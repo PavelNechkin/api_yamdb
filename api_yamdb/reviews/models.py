@@ -69,6 +69,9 @@ class Category(models.Model):
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
 
+    def __str__(self):
+        return self.name
+
 
 class Genre(models.Model):
     name = models.CharField(max_length=256)
@@ -79,18 +82,30 @@ class Genre(models.Model):
         verbose_name = 'Genre'
         verbose_name_plural = 'Genres'
 
+    def __str__(self):
+        return self.name
+
 
 class Title(models.Model):
     name = models.CharField(max_length=256)
     year = models.IntegerField()
-    description = models.TextField()
-    rating = models.IntegerField(null=True)
+    description = models.TextField(null=True, blank=True)
+    rating = models.IntegerField(null=True, blank=True)
     category = models.ForeignKey(
-        Category, on_delete=models.CASCADE, related_name='titles')
+        Category,
+        on_delete=models.CASCADE,
+        related_name='titles'
+    )
     genre = models.ManyToManyField(
-        Genre, related_name='titles')
+        Genre,
+        db_index=True,
+        related_name='titles'
+    )
 
     class Meta:
         ordering = ['name']
         verbose_name = 'Title'
         verbose_name_plural = 'Titles'
+
+    def __str__(self):
+        return self.name
