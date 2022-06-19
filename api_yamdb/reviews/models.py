@@ -35,7 +35,6 @@ class User(AbstractUser):
         blank=True
     )
 
-    # что значит этот декоратор
     @property
     def is_moderator(self):
         return self.role == self.MODERATOR

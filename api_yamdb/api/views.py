@@ -3,13 +3,11 @@ from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 
-from rest_framework import viewsets, permissions, status
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
-from rest_framework import viewsets, filters
-
+from rest_framework import viewsets, filters, permissions, status
 
 from api.permissions import IsAdmin, AdminOrReadOnly
 from api.serializers import (UserSerializer,
@@ -24,13 +22,13 @@ from api.viewsets import ListCreateViewSet
 from reviews.models import User
 from reviews.models import (Category,
                             Genre,
-                            Title,)
+                            Title, )
 
 from .filters import FilterForTitle
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    lookup_field = 'username'  # что это
+    lookup_field = 'username'
     queryset = User.objects.all()
     serializer_class = UserSerializer
     pagination_class = PageNumberPagination
