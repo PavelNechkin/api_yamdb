@@ -1,0 +1,70 @@
+###
+@hostname = localhost
+@port = 8000
+@host = {{hostname}}:{{port}}
+@contentType = application/json
+# teles
+# @Authorization = Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjU1NDM1Nzk1LCJqdGkiOiI4MTE3NWYxYTA2NjE0ODQzODQ3NWViZGZlYTM4OWRhMSIsInVzZXJfaWQiOjF9.FavVdqLETaVrW5i-FfS7wMUotJ4haa_QTB-EnJ66ynk
+# test1
+# @Authorization = Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjU2MDA2MTMwLCJqdGkiOiJlZjk2MDhhMWM1YTM0NmQzOTZiYzk4OTVmNmVhMTgyYiIsInVzZXJfaWQiOjN9.yyvmKSpNiSohQW_nRv2UB11105sMpS6Lv6od6eJGEzc
+# test3
+# @Authorization = Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjU2MDA1Mzk0LCJqdGkiOiI4ZjMzYmQyOTdhYjk0MDJhOTY3MzhhOWVlNWYwOWRhMiIsInVzZXJfaWQiOjV9.cWq-16J7SdqatAMwv8MCgJc-hA5ob7A3BI8QZWIrMTA
+
+### GET POSTS
+http://127.0.0.1:8000/api/v1/review/
+# Authorization: {{Authorization}}
+
+### GET GROUP
+http://127.0.0.1:8000/api/v1/groups
+# Authorization: {{Authorization}}
+
+### GET COMMENTS
+http://127.0.0.1:8000/api/v1/posts/6/comments/
+# Authorization: {{Authorization}}
+
+### GET FOLLOWS
+http://127.0.0.1:8000/api/v1/follow/
+# Authorization: {{Authorization}}
+
+### CREATE NEW POST
+POST  http://127.0.0.1:8000/api/v1/posts/
+Content-type: {{contentType}}
+# Authorization: {{Authorization}}
+
+{
+    "text": "teles test9",
+    "group": 1
+}
+
+### CREATE NEW FOLLOW
+POST  http://127.0.0.1:8000/api/v1/follow/
+Content-type: {{contentType}}
+# Authorization: {{Authorization}}
+
+{
+    "following": "test2"
+}
+
+### PUT POST
+PATCH  http://127.0.0.1:8000/api/v1/posts/5/
+Content-type: {{contentType}}
+# Authorization: {{Authorization}}
+
+{
+    "text": "teles new patch message"
+}
+
+### DELETE POST
+DELETE http://127.0.0.1:8000/api/v1/posts/5/
+# Authorization: {{Authorization}}
+
+### CREATE NEW COMMENT
+POST http://127.0.0.1:8000/api/v1/posts/6/comments/
+Content-type: {{contentType}}
+# Authorization: {{Authorization}}
+
+{
+
+    "text": "test30476576t+76534 new comment"
+
+}

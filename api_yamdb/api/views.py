@@ -16,11 +16,15 @@ from api.serializers import (UserSerializer,
                              UserEditSerializer)
 from api.serializers import (CategorySerializer,
                              GenreSerializer,
-                             TitleSerializer,)
+                             TitleSerializer,
+                             ReviewSerializer,
+                             CommentsSerializer)
 from reviews.models import User
 from reviews.models import (Category,
                             Genre,
-                            Title,)
+                            Title,
+                            Review,
+                            Comments)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -110,3 +114,13 @@ class TitleViewSet(viewsets.ModelViewSet):
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+
+
+class CommentsViewSet(viewsets.ModelViewSet):
+    queryset = Comments.objects.all()
+    serializer_class = CommentsSerializer

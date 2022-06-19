@@ -1,7 +1,8 @@
+from xml.etree.ElementTree import Comment
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-from reviews.models import User
+from reviews.models import Review, User, Comments
 from reviews.models import Category, Genre, Title
 
 
@@ -76,3 +77,15 @@ class TitleSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Title
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = '__all__'
+        model = Review
+
+
+class CommentsSerializer(serializers.ModelSerializer):
+    class Meta:
+        fields = '__all__'
+        model = Comments
