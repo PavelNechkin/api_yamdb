@@ -47,7 +47,6 @@ class RegisterDataSerializer(serializers.ModelSerializer):
     class Meta:
         fields = ('username', 'email')
         model = User
-        read_only_fields = ('role',)
 
     def validate(self, data):
         if data['username'] == 'me':
