@@ -10,61 +10,86 @@
 # test3
 # @Authorization = Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjU2MDA1Mzk0LCJqdGkiOiI4ZjMzYmQyOTdhYjk0MDJhOTY3MzhhOWVlNWYwOWRhMiIsInVzZXJfaWQiOjV9.cWq-16J7SdqatAMwv8MCgJc-hA5ob7A3BI8QZWIrMTA
 
-### GET POSTS
-http://127.0.0.1:8000/api/v1/review/
+### GET TITLES
+http://127.0.0.1:8000/api/v1/titles/
 # Authorization: {{Authorization}}
 
-### GET GROUP
-http://127.0.0.1:8000/api/v1/groups
+### GET REVIEW
+http://127.0.0.1:8000/api/v1/titles/1/reviews/
+# Authorization: {{Authorization}}
+
+### GET REVIEW ON ID
+http://127.0.0.1:8000/api/v1/titles/1/reviews/3/
 # Authorization: {{Authorization}}
 
 ### GET COMMENTS
-http://127.0.0.1:8000/api/v1/posts/6/comments/
+http://127.0.0.1:8000/api/v1/titles/1/reviews/3/comments/
 # Authorization: {{Authorization}}
 
-### GET FOLLOWS
-http://127.0.0.1:8000/api/v1/follow/
-# Authorization: {{Authorization}}
-
-### CREATE NEW POST
-POST  http://127.0.0.1:8000/api/v1/posts/
+### CREATE NEW TITLE
+POST  http://127.0.0.1:8000/api/v1/titles/
 Content-type: {{contentType}}
 # Authorization: {{Authorization}}
 
 {
-    "text": "teles test9",
-    "group": 1
+
+    "name": "test2",
+    "year": 0,
+    "description": "test2",
+    "genre": 
+
+    [
+        "1"
+    ],
+    "category": "1"
+
 }
 
-### CREATE NEW FOLLOW
-POST  http://127.0.0.1:8000/api/v1/follow/
+### CREATE NEW REVIEW
+POST  http://127.0.0.1:8000/api/v1/titles/1/reviews/
 Content-type: {{contentType}}
 # Authorization: {{Authorization}}
 
 {
-    "following": "test2"
+    "text": "test new",
+    "score": 5
 }
 
-### PUT POST
-PATCH  http://127.0.0.1:8000/api/v1/posts/5/
+
+### PUT/PATCH REVIEW
+PATCH  http://127.0.0.1:8000/api/v1/titles/1/reviews/1/
 Content-type: {{contentType}}
 # Authorization: {{Authorization}}
 
 {
-    "text": "teles new patch message"
+    "text": "teles",
+    "score": 2
 }
 
-### DELETE POST
-DELETE http://127.0.0.1:8000/api/v1/posts/5/
+### DELETE REVIEW
+DELETE http://127.0.0.1:8000/api/v1/titles/1/reviews/1/
 # Authorization: {{Authorization}}
 
 ### CREATE NEW COMMENT
-POST http://127.0.0.1:8000/api/v1/posts/6/comments/
+POST http://127.0.0.1:8000/api/v1/titles/1/reviews/3/comments/
 Content-type: {{contentType}}
 # Authorization: {{Authorization}}
 
 {
 
-    "text": "test30476576t+76534 new comment"
+    "text": "test30476576t+76534 new NEW comment"
 
 }
+
+### PUT/PATCH COMMENT
+PATCH http://127.0.0.1:8000/api/v1/titles/1/reviews/3/comments/2/
+Content-type: {{contentType}}
+# Authorization: {{Authorization}}
+
+{
+
+    "text": "test comment"
+}
+
+### DELETE COMMENT
+DELETE http://127.0.0.1:8000/api/v1/titles/1/reviews/3/comments/1/

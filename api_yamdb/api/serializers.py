@@ -74,18 +74,25 @@ class GenreSerializer(serializers.ModelSerializer):
 
 
 class TitleSerializer(serializers.ModelSerializer):
+    review = serializers.StringRelatedField(many=True, required=False)
     class Meta:
         fields = '__all__'
         model = Title
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        read_only=True, slug_field='username'
+    )
     class Meta:
         fields = '__all__'
         model = Review
-
+        read_only_fields = ('title',)
 
 class CommentsSerializer(serializers.ModelSerializer):
+    author = serializers.SlugRelatedField(
+        read_only=True, slug_field='username'
+    )
     class Meta:
         fields = '__all__'
         model = Comments

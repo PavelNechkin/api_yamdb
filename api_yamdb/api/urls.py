@@ -16,8 +16,12 @@ router_v1.register('users', UserViewSet,basename='user')
 router_v1.register('categories', CategoryViewSet, basename='categories')
 router_v1.register('genres', GenreViewSet, basename='genres')
 router_v1.register('titles', TitleViewSet, basename='titles')
-router_v1.register('review', ReviewViewSet, basename='review')
-router_v1.register('comments', CommentsViewSet, basename='comments')
+router_v1.register(r'titles/(?P<title_id>[^/.]+)/reviews', ReviewViewSet, basename='review')
+router_v1.register(r'titles/(?P<title_id>[^/.]+)/reviews/(?P<review_id>[^/.]+)/comments',
+                CommentsViewSet,
+                basename='comments'
+                )
+                
 urlpatterns = [
     path('v1/auth/signup/', register, name='register'),
     path('v1/auth/token/', get_jwt_token, name='token'),

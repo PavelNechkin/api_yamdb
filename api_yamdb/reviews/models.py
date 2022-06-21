@@ -102,7 +102,7 @@ class Title(models.Model):
         Category, on_delete=models.CASCADE, related_name='titles')
     genre = models.ManyToManyField(
         Genre, related_name='titles')
-
+    
     class Meta:
         ordering = ['name']
         verbose_name = 'Title'
@@ -118,18 +118,27 @@ class Review(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='posts'
     )
+    title = models.ForeignKey(
+        Title, on_delete=models.CASCADE, 
+        related_name='review', 
+        null=True
+    )
 
+    def __str__(self):
+        return self.text
 
 class Comments(models.Model):
     author = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='comments'
     )
-    title = models.ForeignKey(
-        Title, on_delete=models.CASCADE, related_name='comments'
-    )
     text = models.TextField()
     created = models.DateTimeField(
         'Дата добавления', auto_now_add=True, db_index=True
+    )
+    review = models.ForeignKey(
+        Review, on_delete=models.CASCADE, 
+        related_name='comments',
+        null=True
     )
 
     def __str__(self):
