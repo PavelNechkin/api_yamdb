@@ -1,3 +1,9 @@
 from django.contrib import admin
+from .models import Category, Review, Genre, Comments, Title, User
 
-# Register your models here.
+admin.site.register(Title)
+admin.site.register(Genre)
+admin.site.register(Comments)
+admin.site.register(Review)
+admin.site.register(Category)
+admin.site.register(User)
