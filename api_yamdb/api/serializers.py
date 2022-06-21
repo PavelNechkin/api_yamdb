@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
@@ -80,13 +81,16 @@ class TitleSerializer(serializers.ModelSerializer):
     )
 
     review = serializers.StringRelatedField(many=True, required=False)
+
     class Meta:
         fields = '__all__'
         model = Title
 
 
 class ReadTitleSerializer(serializers.ModelSerializer):
-    rating = serializers.IntegerField(read_only=True)
+    rating = serializers.IntegerField(
+        source='review__score__avg', read_only=True
+    )
     genre = GenreSerializer(read_only=True, many=True)
     category = CategorySerializer(read_only=True)
 
@@ -99,15 +103,29 @@ class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username'
     )
+
     class Meta:
         fields = '__all__'
         model = Review
         read_only_fields = ('title',)
 
+    def validate(self, data):
+        request = self.context['request']
+        author = request.user
+        title_id = self.context['view'].kwargs.get('title_id')
+        title = get_object_or_404(Title, pk=title_id)
+        if request.method == 'POST':
+            if Review.objects.filter(title=title, author=author).exists():
+                raise serializers.ValidationError('Вы не можете добавить более'
+                                                  'одного отзыва на произведение')
+        return data
+
+
 class CommentsSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True, slug_field='username'
     )
+
     class Meta:
         fields = '__all__'
         model = Comments

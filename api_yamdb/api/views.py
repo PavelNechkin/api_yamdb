@@ -1,15 +1,17 @@
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework import viewsets, filters, permissions, status
 
-from api.permissions import IsAdmin, AdminOrReadOnly
+from api.permissions import IsAdmin, AdminOrReadOnly, IsAdminModeratorOwnerOrReadOnly
 from api.serializers import (UserSerializer,
                              TokenSerializer,
                              RegisterDataSerializer,
@@ -19,7 +21,7 @@ from api.serializers import (CategorySerializer,
                              TitleSerializer,
                              ReadTitleSerializer,
                              ReviewSerializer,
-                             CommentsSerializer,)
+                             CommentsSerializer, )
 from api.viewsets import ListCreateViewSet
 from reviews.models import User
 from reviews.models import (Category,
@@ -124,7 +126,10 @@ class GenreViewSet(ListCreateViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
+    queryset = Title.objects.all().annotate(
+        Avg("review__score")
+    ).order_by("name")  # Павел вместе потом разберем че за код я сам пока не понимаю особо
+    # это нужно чтобы выдавалась среднее значении оценки
     serializer_class = TitleSerializer
     permission_classes = (AdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
@@ -138,6 +143,7 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
+    permission_classes = [IsAdminModeratorOwnerOrReadOnly]
 
     def get_queryset(self):
         title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
