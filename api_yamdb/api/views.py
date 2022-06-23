@@ -6,12 +6,13 @@ from django_filters.rest_framework import DjangoFilterBackend
 
 from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework import viewsets, filters, permissions, status
 
-from api.permissions import IsAdmin, AdminOrReadOnly, IsAdminModeratorOwnerOrReadOnly
+from api.permissions import (IsAdmin,
+                             AdminOrReadOnly,
+                             IsAdminModeratorOwnerOrReadOnly)
 from api.serializers import (UserSerializer,
                              TokenSerializer,
                              RegisterDataSerializer,
@@ -128,7 +129,8 @@ class GenreViewSet(ListCreateViewSet):
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all().annotate(
         Avg("review__score")
-    ).order_by("name")  # Павел вместе потом разберем че за код я сам пока не понимаю особо
+    ).order_by("name")
+    # Павел вместе потом разберем че за код я сам пока не понимаю особо
     # это нужно чтобы выдавалась среднее значении оценки
     serializer_class = TitleSerializer
     permission_classes = (AdminOrReadOnly,)
@@ -158,6 +160,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentsViewSet(viewsets.ModelViewSet):
     serializer_class = CommentsSerializer
+    permission_classes = [IsAdminModeratorOwnerOrReadOnly]
 
     def get_queryset(self):
         review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
