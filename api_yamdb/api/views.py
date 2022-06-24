@@ -35,6 +35,9 @@ from .filters import FilterForTitle
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    """
+    Получение списка пользователей.
+    """
     lookup_field = 'username'
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -71,6 +74,12 @@ class UserViewSet(viewsets.ModelViewSet):
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 def register(request):
+    """
+    Пользователь отправляет POST-запрос на добавление нового пользователя
+    с параметрами email и username на эндпоинт /api/v1/auth/signup/.
+    YaMDB отправляет письмо с кодом подтверждения (confirmation_code)
+    на адрес email.
+    """
     serializer = RegisterDataSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     serializer.save()
@@ -92,6 +101,11 @@ def register(request):
 @api_view(['POST'])
 @permission_classes([permissions.AllowAny])
 def get_jwt_token(request):
+    """
+    Пользователь отправляет POST-запрос с параметрами
+    username и confirmation_code на эндпоинт /api/v1/auth/token/,
+    в ответе на запрос ему приходит token (JWT-токен).
+    """
     serializer = TokenSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     user = get_object_or_404(
@@ -109,6 +123,11 @@ def get_jwt_token(request):
 
 
 class CategoryViewSet(ListCreateViewSet):
+    """
+    Получить список всех категорий можно без токена.
+    Добавить новую категорию можно только с правами Администратора.
+    Удалить категорию может только Администратор.
+    """
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (AdminOrReadOnly,)
@@ -118,6 +137,11 @@ class CategoryViewSet(ListCreateViewSet):
 
 
 class GenreViewSet(ListCreateViewSet):
+    """
+    Получить список всех жанров можно без токена.
+    Добавить новый жанр можно только с правами Администратора.
+    Удалить жанр может только Администратор.
+    """
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     permission_classes = (AdminOrReadOnly,)
@@ -127,6 +151,17 @@ class GenreViewSet(ListCreateViewSet):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
+    """
+    Получить список всех произведений можно без токена.
+    Добавить новое призведение можно только с правами Администратора.
+    Нельзя добавлять произведения, которые еще не вышли
+    (год выпуска не может быть больше текущего).
+    При добавлении нового произведения требуется указать уже
+    существующие категорию и жанр.
+    Получить информацию о произведении можно без токена.
+    Обновить информация о произведении может только администратор.
+    Удалить произведение может только Администратор.
+    """
     queryset = Title.objects.all().annotate(
         Avg('review__score')
     ).order_by('name')
@@ -142,6 +177,15 @@ class TitleViewSet(viewsets.ModelViewSet):
 
 
 class ReviewViewSet(viewsets.ModelViewSet):
+    """
+    Получить список всех отзывов можно без токена.
+    Добавить новый отзыв могут только Аутентифицированные пользователи.
+    Пользователь может оставить только один отзыв на произведение.
+    Получить отзыв по id для указанного произведения можно без токена.
+    Частично обновить отзыв могут только автор отзыва,
+    Модератор или Администратор.
+    Удалить отзыв могут только автор отзыва, Модератор или Администратор
+    """
     serializer_class = ReviewSerializer
     permission_classes = [IsAdminModeratorOwnerOrReadOnly]
 
@@ -158,6 +202,14 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 
 class CommentsViewSet(viewsets.ModelViewSet):
+    """
+    Получить список всех комментариев можно без токена.
+    Добавить новый коммент могут только Аутентифицированные пользователи.
+    Получить коммент для тзыва по id можно без токена.
+    Частично обновить коммент могут только автор отзыва,
+    Модератор или Администратор.
+    Удалить коммент могут только автор коммента, Модератор или Администратор
+    """
     serializer_class = CommentsSerializer
     permission_classes = [IsAdminModeratorOwnerOrReadOnly]
 
