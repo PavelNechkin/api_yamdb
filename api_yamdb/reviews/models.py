@@ -123,7 +123,9 @@ class Title(models.Model):
 
 class Review(models.Model):
     text = models.TextField(verbose_name='Review text')
-    score = models.PositiveSmallIntegerField(verbose_name='Score', choices=VALUE)
+    score = models.PositiveSmallIntegerField(
+        verbose_name='Score',
+        choices=VALUE)
     pub_date = models.DateTimeField(
         verbose_name='Publication date',
         auto_now_add=True
