@@ -128,10 +128,8 @@ class GenreViewSet(ListCreateViewSet):
 
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all().annotate(
-        Avg("review__score")
-    ).order_by("name")
-    # Павел вместе потом разберем че за код я сам пока не понимаю особо
-    # это нужно чтобы выдавалась среднее значении оценки
+        Avg('review__score')
+    ).order_by('name')
     serializer_class = TitleSerializer
     permission_classes = (AdminOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
@@ -147,28 +145,29 @@ class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     permission_classes = [IsAdminModeratorOwnerOrReadOnly]
 
+    def get_title(self):
+        return get_object_or_404(Title, id=self.kwargs.get('title_id'))
+
     def get_queryset(self):
-        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
-        review = Review.objects.filter(title=title)
+        review = Review.objects.filter(title=self.get_title())
         return review
 
     def perform_create(self, serializer):
-        title = get_object_or_404(Title, id=self.kwargs.get('title_id'))
         author = self.request.user
-        serializer.save(title_id=title.id, author=author)
+        serializer.save(title_id=self.get_title().id, author=author)
 
 
 class CommentsViewSet(viewsets.ModelViewSet):
     serializer_class = CommentsSerializer
     permission_classes = [IsAdminModeratorOwnerOrReadOnly]
 
+    def get_review(self):
+        return get_object_or_404(Review, id=self.kwargs.get('review_id'))
+
     def get_queryset(self):
-        review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
-        comments = Comments.objects.filter(review=review)
+        comments = Comments.objects.filter(review=self.get_review())
         return comments
 
     def perform_create(self, serializer):
-        review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
-        review_id = review.id
         author = self.request.user
-        serializer.save(review_id=review_id, author=author)
+        serializer.save(review_id=self.get_review().id, author=author)

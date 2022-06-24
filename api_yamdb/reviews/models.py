@@ -20,33 +20,45 @@ class User(AbstractUser):
     ADMIN = 'admin'
     MODERATOR = 'moderator'
     USER = 'user'
-    ROLES = [
+    ROLES = (
         (ADMIN, 'Administrator'),
         (MODERATOR, 'Moderator'),
         (USER, 'User'),
-    ]
+    )
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ('username',)
 
     email = models.EmailField(
-        verbose_name='Адрес электронной почты',
+        verbose_name='E-mail address',
         unique=True,
     )
     username = models.CharField(
-        verbose_name='Имя пользователя',
+        verbose_name='Username',
         max_length=150,
-        null=True,
+        blank=True,
         unique=True
     )
     role = models.CharField(
-        verbose_name='Роль',
+        verbose_name='Role',
         max_length=50,
         choices=ROLES,
         default=USER
     )
     bio = models.TextField(
-        verbose_name='О себе',
-        null=True,
-        blank=True
+        verbose_name='Biography',
+        blank=True,
     )
+
+    class Meta:
+        ordering = ('id',)
+        verbose_name = 'User'
+
+        constraints = [
+            models.CheckConstraint(
+                check=~models.Q(username__iexact='me'),
+                name='username_is_not_me'
+            )
+        ]
 
     @property
     def is_moderator(self):
@@ -56,28 +68,13 @@ class User(AbstractUser):
     def is_admin(self):
         return self.role == self.ADMIN
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
-
-    class Meta:
-        ordering = ['id']
-        verbose_name = 'Пользователь'
-        verbose_name_plural = 'Пользователи'
-
-        constraints = [
-            models.CheckConstraint(
-                check=~models.Q(username__iexact='me'),
-                name='username_is_not_me'
-            )
-        ]
-
 
 class Category(models.Model):
-    name = models.CharField(max_length=256)
-    slug = models.SlugField(unique=True)
+    name = models.CharField(verbose_name='Name of category', max_length=256)
+    slug = models.SlugField(verbose_name='Slug of category', unique=True)
 
     class Meta:
-        ordering = ['name']
+        ordering = ('name',)
         verbose_name = 'Category'
         verbose_name_plural = 'Categories'
 
@@ -86,11 +83,11 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
-    name = models.CharField(max_length=256)
-    slug = models.SlugField(unique=True)
+    name = models.CharField(verbose_name='Name of genre', max_length=256)
+    slug = models.SlugField(verbose_name='Slug of genre', unique=True)
 
     class Meta:
-        ordering = ['name']
+        ordering = ('name',)
         verbose_name = 'Genre'
         verbose_name_plural = 'Genres'
 
@@ -99,23 +96,24 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-    name = models.CharField(max_length=256)
-    year = models.IntegerField()
-    description = models.TextField(null=True, blank=True)
-    rating = models.IntegerField(null=True, blank=True)
+    name = models.CharField(verbose_name='Name', max_length=256)
+    year = models.PositiveSmallIntegerField(verbose_name='Year of issue')
+    description = models.TextField(verbose_name='Description', blank=True)
     category = models.ForeignKey(
         Category,
+        verbose_name='Category',
         on_delete=models.CASCADE,
         related_name='titles'
     )
     genre = models.ManyToManyField(
         Genre,
+        verbose_name='Genre',
         db_index=True,
         related_name='titles'
     )
 
     class Meta:
-        ordering = ['name']
+        ordering = ('name',)
         verbose_name = 'Title'
         verbose_name_plural = 'Titles'
 
@@ -124,27 +122,29 @@ class Title(models.Model):
 
 
 class Review(models.Model):
-    text = models.TextField()
-    score = models.PositiveSmallIntegerField(choices=VALUE)
+    text = models.TextField(verbose_name='Review text')
+    score = models.PositiveSmallIntegerField(verbose_name='Score', choices=VALUE)
     pub_date = models.DateTimeField(
-        'Дата публикации', auto_now_add=True
+        verbose_name='Publication date',
+        auto_now_add=True
     )
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='posts'
+        User,
+        verbose_name='Author',
+        on_delete=models.CASCADE,
+        related_name='posts'
     )
     title = models.ForeignKey(
-        Title, on_delete=models.CASCADE,
+        Title,
+        verbose_name='Title',
+        on_delete=models.CASCADE,
         related_name='review',
         null=True
     )
 
-    def __str__(self):
-        return self.text
-
     class Meta:
-        verbose_name = 'Отзыв'
-        verbose_name_plural = 'Отзывы'
-        ordering = ['pub_date']
+        verbose_name = 'Review'
+        ordering = ('pub_date',)
         constraints = [
             models.UniqueConstraint(
                 fields=['title', 'author'],
@@ -152,25 +152,34 @@ class Review(models.Model):
             ),
         ]
 
+    def __str__(self):
+        return self.text
+
 
 class Comments(models.Model):
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='comments'
+        User,
+        verbose_name='Author',
+        on_delete=models.CASCADE,
+        related_name='comments'
     )
-    text = models.TextField()
+    text = models.TextField(verbose_name='Comment text', )
     pub_date = models.DateTimeField(
-        'Дата добавления', auto_now_add=True, db_index=True
+        verbose_name='Date added',
+        auto_now_add=True,
+        db_index=True
     )
     review = models.ForeignKey(
-        Review, on_delete=models.CASCADE,
+        Review,
+        verbose_name='Review',
+        on_delete=models.CASCADE,
         related_name='comments',
         null=True
     )
 
+    class Meta:
+        verbose_name = 'Comment'
+        ordering = ('pub_date',)
+
     def __str__(self):
         return self.text
-
-    class Meta:
-        verbose_name = 'Комментарий'
-        verbose_name_plural = 'Комментарии'
-        ordering = ['pub_date']
