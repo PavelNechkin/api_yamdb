@@ -1,4 +1,7 @@
+import datetime
+
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 
 from django.db import models
 
@@ -95,9 +98,15 @@ class Genre(models.Model):
         return self.name
 
 
+def validate_year(value):
+    if value > datetime.datetime.now().year:
+        raise ValidationError('Incorrect year')
+
+
 class Title(models.Model):
     name = models.CharField(verbose_name='Name', max_length=256)
-    year = models.PositiveSmallIntegerField(verbose_name='Year of issue')
+    year = models.PositiveSmallIntegerField(verbose_name='Year of issue',
+                                            validators=[validate_year])
     description = models.TextField(verbose_name='Description', blank=True)
     category = models.ForeignKey(
         Category,
