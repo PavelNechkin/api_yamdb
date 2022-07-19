@@ -18,7 +18,7 @@ git clone ...
 ```
 
 ```
-cd api_final_yatube
+cd api_yamdb
 ```
 
 Cоздать и активировать виртуальное окружение:
@@ -56,4 +56,4 @@ python manage.py runserver
 ### Примеры:
 
 Примеры и инструкцию можмо посмотреть тут:
-http://127.0.0.1:8000/swagger/
+http://127.0.0.1:8000/redoc/
